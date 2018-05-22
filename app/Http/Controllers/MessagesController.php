@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use App\Task;    // 追加
+use App\Message;    // 追加
 
-class TasksController extends Controller
+class MessagesController extends Controller
 {
      /**
      * Display a listing of the resource.
@@ -17,10 +17,75 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        $messages = Message::all();
 
-        return view('tasks.index', [
-            'tasks' => $tasks,
+        return view('messages.index', [
+            'messages' => $messages,
      ]);
+    }
+    
+    public function show($id)
+    {
+        $message = Message::find($id);
+
+        return view('messages.show', [
+            'message' => $message,
+        ]);
+    }
+    
+    public function create()
+    {
+        $message = new Message;
+
+        return view('messages.create', [
+            'message' => $message,
+        ]);
+    }
+    
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'title' => 'required|max:191',   // 追加
+            'content' => 'required|max:191',
+        ]);
+        
+        $message = new Message;
+        $message->title = $request->title; 
+        $message->content = $request->content;
+        $message->save();
+
+        return redirect('/');
+    }
+    
+    public function edit($id)
+    {
+        $message = Message::find($id);
+
+        return view('messages.edit', [
+            'message' => $message,
+        ]);
+    }
+    
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'title' => 'required|max:191',   // 追加
+            'content' => 'required|max:191',
+        ]);
+        
+        $message = Message::find($id);
+        $message->title = $request->title; 
+        $message->content = $request->content;
+        $message->save();
+
+        return redirect('/');
+    }
+    
+    public function destroy($id)
+    {
+        $message = Message::find($id);
+        $message->delete();
+
+        return redirect('/');
     }
 }
